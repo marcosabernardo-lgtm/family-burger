@@ -187,7 +187,7 @@ table.dt tr:hover td{background:var(--surface2)}
 .ficha-ing:last-child{border:none}
 .ficha-total{background:var(--surface2);border-radius:8px;padding:11px;text-align:right;margin-top:8px;font-weight:700;color:var(--brand);font-size:14px}
 .pag-cond-box{background:var(--surface2);border-radius:10px;padding:14px;margin-top:10px}
-.orc-img{width:100%;height:auto;border-radius:8px;margin-bottom:10px;display:block}
+.orc-img{width:80px;height:80px;object-fit:cover;border-radius:8px;flex-shrink:0}
 .mt16{margin-top:16px}
 .flex-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .compra-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
@@ -303,10 +303,13 @@ table.dt tr:hover td{background:var(--surface2)}
       <div class="orc-card">
         <div class="orc-header"><span class="orc-title">Forma de Pagamento</span></div>
         <div class="orc-body">
-          <div class="pag-grid">
-            <div class="pag-opt selected" id="pag-pix" onclick="selPag('pix')"><div class="icon">📱</div><strong>PIX</strong><p>Sem taxas</p></div>
-            <div class="pag-opt" id="pag-debito" onclick="selPag('debito')"><div class="icon">💳</div><strong>Débito</strong><p>+ taxa máquina</p></div>
-            <div class="pag-opt" id="pag-credito" onclick="selPag('credito')"><div class="icon">💳</div><strong>Crédito</strong><p>+ taxa máquina</p></div>
+          <div style="background:var(--surface2);border:2px solid var(--brand);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:4px">
+            <div style="font-size:32px">📱</div>
+            <div>
+              <div style="font-weight:700;font-size:15px;color:var(--text)">PIX</div>
+              <div style="font-size:13px;color:var(--text2);margin-top:2px">Chave: <strong style="color:var(--brand)">47997434973</strong> — Nubank</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px">Sem taxas adicionais</div>
+            </div>
           </div>
           <div class="pag-cond-box" id="pag-cond-box"></div>
           <div class="respons-info" style="margin-top:12px">
@@ -417,10 +420,13 @@ table.dt tr:hover td{background:var(--surface2)}
       <div class="orc-card">
         <div class="orc-header"><span class="orc-title">Forma de Pagamento</span></div>
         <div class="orc-body">
-          <div class="pag-grid">
-            <div class="pag-opt selected" id="gpag-pix" onclick="selGPag('pix')"><div class="icon">📱</div><strong>PIX</strong><p>Sem taxas</p></div>
-            <div class="pag-opt" id="gpag-debito" onclick="selGPag('debito')"><div class="icon">💳</div><strong>Débito</strong><p>+ taxa máquina</p></div>
-            <div class="pag-opt" id="gpag-credito" onclick="selGPag('credito')"><div class="icon">💳</div><strong>Crédito</strong><p>+ taxa máquina</p></div>
+          <div style="background:var(--surface2);border:2px solid var(--brand);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:4px">
+            <div style="font-size:32px">📱</div>
+            <div>
+              <div style="font-weight:700;font-size:15px;color:var(--text)">PIX</div>
+              <div style="font-size:13px;color:var(--text2);margin-top:2px">Chave: <strong style="color:var(--brand)">47997434973</strong> — Nubank</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px">Sem taxas adicionais</div>
+            </div>
           </div>
           <div style="background:var(--surface2);border-radius:10px;padding:14px;margin-top:10px;font-size:13px;color:var(--text2)">
             💡 Após confirmar, entraremos em contato pelo WhatsApp para combinar a data e entrega/retirada.
@@ -475,7 +481,7 @@ table.dt tr:hover td{background:var(--surface2)}
   <div class="footer-bar">
     📱 <a href="https://wa.me/5547997529934">(47) 99752-9934</a> &nbsp;|&nbsp;
     📷 <a href="https://instagram.com/familyburgergourmet_" target="_blank">@familyburgergourmet_</a> &nbsp;|&nbsp;
-    PIX: 47997434973
+    PIX: 47997434973 (Nubank)
   </div>
 </div>
 
@@ -748,10 +754,15 @@ function buildOrcamento(){
   document.getElementById('orc-items').innerHTML=sel.map(l=>{
     const q=S.qtdLanches[l.id]||0;const tot=l.preco*q;sub+=tot;
     return `<div class="orc-card"><div class="orc-header"><span class="orc-title">${l.nome}</span><span style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px">${fmt(tot)}</span></div>
-      <div class="orc-body"><img src="${l.img}" class="orc-img" alt="${l.nome}">
-        <div class="orc-line"><span class="orc-label">Quantidade</span><span class="orc-value">${q} unidades</span></div>
-        <div class="orc-line"><span class="orc-label">Preço unitário</span><span class="orc-value">${fmt(l.preco)}</span></div>
-        <div style="background:var(--surface2);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:var(--text2);line-height:1.5">${l.desc}</div>
+      <div class="orc-body">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <img src="${l.img}" class="orc-img" alt="${l.nome}">
+          <div style="flex:1">
+            <div class="orc-line"><span class="orc-label">Quantidade</span><span class="orc-value">${q} unidades</span></div>
+            <div class="orc-line"><span class="orc-label">Preço unitário</span><span class="orc-value">${fmt(l.preco)}</span></div>
+            <div style="background:var(--surface2);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:var(--text2);line-height:1.5">${l.desc}</div>
+          </div>
+        </div>
       </div></div>`;
   }).join('');
   const total=sub+150;
@@ -809,7 +820,7 @@ function confirmarEvento(){
     `👤 *${nome}* | 📱 ${wpp}\n📅 Data: ${S.dataEvento}\n\n`+
     `*Lanches:*\n${itens.join('\n')}\n\nTaxa: R$ 150,00\n*TOTAL: ${fmt(total)}*\n\n`+
     `*Pagamento (${S.pagamento.toUpperCase()}):*\n• 10% reserva: ${fmt(total*0.10)}\n• 40% (7 dias antes): ${fmt(total*0.40)}\n• 50% no dia: ${fmt(total*0.50)}\n\n`+
-    `PIX: 47997434973${obs?'\n\nObs: '+obs:''}\n_Aguardando confirmação_`
+    `PIX: 47997434973 (Nubank)${obs?'\n\nObs: '+obs:''}\n_Aguardando confirmação_`
   );
   window.open(`https://wa.me/5547997529934?text=${msg}`,'_blank');
   alert('Pedido enviado! Entraremos em contato pelo WhatsApp em breve.');
@@ -860,7 +871,7 @@ function goGStep(n){
   }
 }
 
-function selGPag(p){S.gourmet.pagamento=p;['pix','debito','credito'].forEach(x=>document.getElementById('gpag-'+x).classList.remove('selected'));document.getElementById('gpag-'+p).classList.add('selected');}
+function selGPag(p){S.gourmet.pagamento='pix';}
 
 function confirmarGourmet(){
   const nome=document.getElementById('gcli-nome').value.trim();
@@ -880,7 +891,7 @@ function confirmarGourmet(){
     `👤 *${nome}* | 📱 ${wpp}\n\n`+
     `*Produto:* ${prod.nome}\n*Quantidade:* ${S.gourmet.qtd} unidades\n*Total: ${fmt(total)}*\n`+
     `*Pagamento:* ${S.gourmet.pagamento.toUpperCase()}\n\n`+
-    `PIX: 47997434973${obs?'\n\nObs: '+obs:''}\n_Aguardando confirmação e combinação de entrega_`
+    `PIX: 47997434973 (Nubank)${obs?'\n\nObs: '+obs:''}\n_Aguardando confirmação e combinação de entrega_`
   );
   window.open(`https://wa.me/5547997529934?text=${msg}`,'_blank');
   alert('Encomenda enviada! Entraremos em contato pelo WhatsApp para combinar a entrega.');
@@ -967,7 +978,7 @@ function mudarStatus(id,status){
       `${isEvento?`📅 Data: ${p.data}\n`:''}`+
       `*Total: ${fmt(p.total)}*\n*Pagamento:* ${p.pagamento.toUpperCase()}\n\n`+
       `${isEvento?`*Cronograma:*\n• 10% reserva: ${fmt(p.total*0.10)}\n• 40% (7 dias antes): ${fmt(p.total*0.40)}\n• 50% no dia: ${fmt(p.total*0.50)}\n\n`:''}`+
-      `PIX: 47997434973 (Banco Inter)\nInstagram: @familyburgergourmet_`
+      `PIX: 47997434973 (Nubank) (Nubank)\nInstagram: @familyburgergourmet_`
     );
     window.open(`https://wa.me/55${p.wpp.replace(/\D/g,'')}?text=${msg}`,'_blank');
   }
