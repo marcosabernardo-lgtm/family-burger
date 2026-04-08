@@ -712,10 +712,20 @@ function calcTot(){
 function buildSugestao(){
   const sel=S.lanches.filter(l=>S.selLanches[l.id]);
   const sugBox=document.getElementById('sug-box'); const qtyBox=document.getElementById('qty-box');
-  sel.forEach(l=>{ const s=Math.ceil(S.pessoas.h*l.porH+S.pessoas.m*l.porM+S.pessoas.c*0.5*l.porC); if(!S.qtdLanches[l.id])S.qtdLanches[l.id]=Math.max(s,0); });
-  sugBox.innerHTML=`<h4>Sugestão para ${S.pessoas.h+S.pessoas.m+S.pessoas.c} pessoas</h4>`+
-    sel.map(l=>`<div class="suggestion-row"><span style="font-size:13px">${l.nome}</span><span style="color:var(--gold);font-weight:600">${Math.ceil(S.pessoas.h*l.porH+S.pessoas.m*l.porM+S.pessoas.c*0.5*l.porC)} un</span></div>`).join('');
-  qtyBox.innerHTML=`<p style="font-size:12px;color:var(--text2);margin-bottom:14px;font-weight:600">Ajuste as quantidades:</p>`+
+  const totalPessoas=S.pessoas.h+S.pessoas.m+S.pessoas.c;
+  // Total sugerido baseado no perfil (homem=2, mulher=1, criança=1)
+  const totalSug=Math.ceil(S.pessoas.h*2 + S.pessoas.m*1 + S.pessoas.c*0.5);
+  const sugeridoFinal=Math.max(totalSug,25);
+  // Distribui igualmente entre os lanches selecionados se não houver qtd definida
+  const porLanche=Math.ceil(sugeridoFinal/sel.length);
+  sel.forEach(l=>{ if(!S.qtdLanches[l.id]) S.qtdLanches[l.id]=porLanche; });
+  sugBox.innerHTML=`<h4>Sugestão para ${totalPessoas} pessoas</h4>
+    <div class="suggestion-row">
+      <span style="font-size:13px">Total de lanches sugerido</span>
+      <span style="color:var(--gold);font-weight:600">${sugeridoFinal} unidades</span>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-top:8px">💡 Distribua as quantidades abaixo como preferir entre os lanches selecionados.</div>`;
+  qtyBox.innerHTML=`<p style="font-size:12px;color:var(--text2);margin-bottom:14px;font-weight:600">Ajuste as quantidades por lanche:</p>`+
     sel.map(l=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
       <div><div style="font-size:13px">${l.nome}</div><div style="font-size:11px;color:var(--text3)">${fmt(l.preco)}/un</div></div>
       <div class="qty-selector">
