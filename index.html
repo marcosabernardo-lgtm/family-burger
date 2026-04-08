@@ -678,6 +678,8 @@ function selecionarModo(modo){
 // ===== EVENTO =====
 function goStep(n){
   if(n===2 && Object.keys(S.selLanches).length===0){alert('Selecione pelo menos um lanche!');return;}
+  // Ao voltar para step 2, limpa qtd para recalcular sugestão
+  if(n===2) S.qtdLanches={};
   if(n===3) buildSugestao();
   if(n===4) buildOrcamento();
   if(n===5) renderAgendaCli();
@@ -714,7 +716,7 @@ function buildSugestao(){
   const sugBox=document.getElementById('sug-box'); const qtyBox=document.getElementById('qty-box');
   const totalPessoas=S.pessoas.h+S.pessoas.m+S.pessoas.c;
   // Total sugerido baseado no perfil (homem=2, mulher=1, criança=1)
-  const totalSug=Math.ceil(S.pessoas.h*2 + S.pessoas.m*1 + S.pessoas.c*0.5);
+  const totalSug=Math.ceil(S.pessoas.h*2 + S.pessoas.m*1 + S.pessoas.c*1);
   const sugeridoFinal=Math.max(totalSug,25);
   // Distribui igualmente entre os lanches selecionados se não houver qtd definida
   const porLanche=Math.ceil(sugeridoFinal/sel.length);
