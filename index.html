@@ -329,7 +329,7 @@ table.dt tr:hover td{background:var(--surface2)}
         <div class="orc-header"><span class="orc-title">Data do Evento</span></div>
         <div class="orc-body">
           <div class="agenda-grid" id="agenda-cli"></div>
-          <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado</p>
+          <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado &nbsp;• Apenas sábados e domingos</p>
         </div>
       </div>
       <div class="orc-card">
@@ -784,11 +784,20 @@ function renderAgendaCli(){
   const last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
   for(let i=0;i<first.getDay();i++) h+=`<div class="dia vz"></div>`;
   for(let d=1;d<=last;d++){
+    const date=new Date(now.getFullYear(),now.getMonth(),d);
+    const dow=date.getDay(); // 0=Dom, 6=Sab
     const k=`${now.getFullYear()}-${now.getMonth()+1}-${d}`;
     const ocup=S.diasOcupados.includes(k)||S.pedidos.some(p=>p.data===k&&p.status==='confirmado');
-    const sel=S.dataEvento===k;const past=d<now.getDate();
-    if(past||ocup) h+=`<div class="dia ocup"><div class="dia-num">${d}</div></div>`;
-    else h+=`<div class="dia ${sel?'sel':'disp'}" onclick="selData('${k}')"><div class="dia-num">${d}</div><div class="dia-lbl">${sel?'✓':''}</div></div>`;
+    const sel=S.dataEvento===k;
+    const past=d<now.getDate();
+    const fimDeSemana=(dow===0||dow===6);
+    if(!fimDeSemana||past){
+      h+=`<div class="dia ocup"><div class="dia-num">${d}</div></div>`;
+    } else if(ocup){
+      h+=`<div class="dia ocup"><div class="dia-num">${d}</div><div class="dia-lbl">Ocup</div></div>`;
+    } else {
+      h+=`<div class="dia ${sel?'sel':'disp'}" onclick="selData('${k}')"><div class="dia-num">${d}</div><div class="dia-lbl">${sel?'✓':''}</div></div>`;
+    }
   }
   g.innerHTML=h;
 }
@@ -986,10 +995,17 @@ function renderAgendaAdmin(){
   const last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
   for(let i=0;i<first.getDay();i++) h+=`<div class="dia vz"></div>`;
   for(let d=1;d<=last;d++){
+    const date=new Date(now.getFullYear(),now.getMonth(),d);
+    const dow=date.getDay();
+    const fimDeSemana=(dow===0||dow===6);
     const k=`${now.getFullYear()}-${now.getMonth()+1}-${d}`;
     const ocup=S.diasOcupados.includes(k)||S.pedidos.some(p=>p.data===k&&p.status==='confirmado');
     const sel=S.diaAdminSel===k;
-    h+=`<div class="dia ${ocup?'ocup':'disp'} ${sel?'sel':''}" onclick="selDiaAdmin('${k}')"><div class="dia-num">${d}</div><div class="dia-lbl">${ocup?'Ocup':''}</div></div>`;
+    if(!fimDeSemana){
+      h+=`<div class="dia ocup" style="opacity:.3"><div class="dia-num">${d}</div></div>`;
+    } else {
+      h+=`<div class="dia ${ocup?'ocup':'disp'} ${sel?'sel':''}" onclick="selDiaAdmin('${k}')"><div class="dia-num">${d}</div><div class="dia-lbl">${ocup?'Ocup':dow===0?'Dom':'Sáb'}</div></div>`;
+    }
   }
   document.getElementById('tab-agenda').innerHTML=`
     <div class="flex-between"><div class="section-title" style="margin:0">Agenda</div>
