@@ -187,7 +187,7 @@ table.dt tr:hover td{background:var(--surface2)}
 .ficha-ing:last-child{border:none}
 .ficha-total{background:var(--surface2);border-radius:8px;padding:11px;text-align:right;margin-top:8px;font-weight:700;color:var(--brand);font-size:14px}
 .pag-cond-box{background:var(--surface2);border-radius:10px;padding:14px;margin-top:10px}
-.orc-img{width:80px;height:80px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.orc-img{display:none}
 .mt16{margin-top:16px}
 .flex-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .compra-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
@@ -755,14 +755,9 @@ function buildOrcamento(){
     const q=S.qtdLanches[l.id]||0;const tot=l.preco*q;sub+=tot;
     return `<div class="orc-card"><div class="orc-header"><span class="orc-title">${l.nome}</span><span style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px">${fmt(tot)}</span></div>
       <div class="orc-body">
-        <div style="display:flex;gap:14px;align-items:flex-start">
-          <img src="${l.img}" class="orc-img" alt="${l.nome}">
-          <div style="flex:1">
-            <div class="orc-line"><span class="orc-label">Quantidade</span><span class="orc-value">${q} unidades</span></div>
-            <div class="orc-line"><span class="orc-label">Preço unitário</span><span class="orc-value">${fmt(l.preco)}</span></div>
-            <div style="background:var(--surface2);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:var(--text2);line-height:1.5">${l.desc}</div>
-          </div>
-        </div>
+        <div class="orc-line"><span class="orc-label">Quantidade</span><span class="orc-value">${q} unidades</span></div>
+        <div class="orc-line"><span class="orc-label">Preço unitário</span><span class="orc-value">${fmt(l.preco)}</span></div>
+        <div style="background:var(--surface2);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:var(--text2);line-height:1.5">${l.desc}</div>
       </div></div>`;
   }).join('');
   const total=sub+150;
