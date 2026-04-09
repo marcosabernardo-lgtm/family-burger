@@ -430,36 +430,55 @@ table.dt tr:hover td{background:var(--surface2)}
       <button class="btn btn-gold btn-block" onclick="goGStep(2)">Próximo: Escolher Quantidade →</button>
     </div>
     <div id="gps2" style="display:none">
-      <div class="section-title">Quantidade</div>
-      <div class="qty-card">
-        <p style="font-size:13px;color:var(--text2);margin-bottom:4px">Mínimo de <strong style="color:var(--gold)">12 unidades</strong> por encomenda.</p>
-        <div class="qty-big">
-          <button class="qty-big-btn" onclick="chgGQty(-1)">−</button>
-          <div><div class="qty-big-val" id="gqtd-val">12</div><div class="qty-big-label">unidades</div></div>
-          <button class="qty-big-btn" onclick="chgGQty(1)">+</button>
-        </div>
-        <div class="qty-subtotal" id="gqtd-sub">Subtotal: <strong>R$ 0,00</strong></div>
+      <div class="section-title">Quantidades</div>
+      <div class="people-card" id="gqty-box">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Mínimo de <strong style="color:var(--brand)">12 unidades no total</strong> por encomenda.</p>
       </div>
-      <div id="gqtd-alert" class="alert alert-gold" style="display:none">⚠️ Mínimo de 12 unidades por encomenda.</div>
-      <div style="display:flex;gap:10px">
+      <div id="gqtd-alert" class="alert alert-gold" style="display:none">⚠️ Mínimo de 12 unidades no total.</div>
+
+      <!-- ENTREGA OU RETIRADA -->
+      <div class="section-title" style="margin-top:20px">Entrega ou Retirada?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div class="gourmet-opt" id="entrega-opt" onclick="selEntrega('entrega')">
+          <div style="font-size:28px;margin-bottom:6px">🚗</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text)">Entrega</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">+ R$ 20,00 de frete</div>
+          <div class="gourmet-opt-check">✓ Selecionado</div>
+        </div>
+        <div class="gourmet-opt" id="retirada-opt" onclick="selEntrega('retirada')">
+          <div style="font-size:28px;margin-bottom:6px">📍</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text)">Retirada</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">Sem custo adicional</div>
+          <div class="gourmet-opt-check">✓ Selecionado</div>
+        </div>
+      </div>
+      <div id="entrega-info" style="display:none;margin-bottom:16px">
+        <div class="form-group">
+          <label class="form-label">Seu endereço de entrega</label>
+          <input class="form-input" id="gcli-endereco" placeholder="Rua, número, bairro, cidade">
+        </div>
+      </div>
+      <div id="retirada-info" style="display:none;background:var(--surface2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--text2)">
+        📍 <strong style="color:var(--text)">Endereço de retirada:</strong><br>
+        Rua Santa Terezinha, 19 — Bairro Itaum<br>
+        CEP 89210-495
+      </div>
+
+      <!-- DATA -->
+      <div class="section-title">Quando deseja receber/retirar?</div>
+      <div class="people-card">
+        <div id="congelado-regra" style="border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;line-height:1.7"></div>
+        <div class="agenda-grid" id="agenda-congelado"></div>
+        <p style="font-size:11px;color:var(--text3);margin-top:6px">🟢 Disponível &nbsp;🔴 Indisponível &nbsp;🟡 Selecionado</p>
+      </div>
+      <div id="congelado-date-alert" class="alert alert-red" style="display:none">Selecione uma data.</div>
+
+      <div style="display:flex;gap:10px;margin-top:4px">
         <button class="btn btn-outline" onclick="goGStep(1)">← Voltar</button>
         <button class="btn btn-gold" style="flex:1" onclick="goGStep(3)">Ver Orçamento →</button>
       </div>
     </div>
 
-    <div id="gps2b" style="display:none">
-      <div class="section-title">Data de Entrega</div>
-      <div class="people-card">
-        <div id="congelado-regra" style="border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.7"></div>
-        <div class="agenda-grid" id="agenda-congelado"></div>
-        <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Indisponível &nbsp;🟡 Selecionado</p>
-      </div>
-      <div id="congelado-date-alert" class="alert alert-red" style="display:none">Selecione uma data de entrega.</div>
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-outline" onclick="goGStep(2)">← Voltar</button>
-        <button class="btn btn-gold" style="flex:1" onclick="goGStep(3)">Ver Orçamento →</button>
-      </div>
-    </div>
     <div id="gps3" style="display:none">
       <div class="section-title">Orçamento</div>
       <div class="orc-card">
@@ -650,7 +669,7 @@ const S = {
   calAno:new Date().getFullYear(),
   editLanche:null,
   ftIngs:[],
-  gourmet:{ tipo:null, qtd:12, pagamento:'pix', dataEntrega:null },
+  gourmet:{ tipo:null, tipos:{}, qtds:{}, qtd:12, pagamento:'pix', dataEntrega:null, entrega:null },
   lanches:[
     {id:1,nome:'Sister Burger',preco:20,img:SISTER_IMG,desc:'Suculento hambúrguer 150gr Blend da Casa DEFUMADO, Queijo Cheddar DERRETIDO, deliciosa MAIONESE DEFUMADA, Pão Macio.',porH:2,porM:1,porC:1},
     {id:2,nome:'Salads Burger',preco:24,img:SALADS_IMG,desc:'Suculento hambúrguer 150gr Blend da Casa DEFUMADO, Queijo Cheddar DERRETIDO, Bacon, Tomate e Alface frescos, deliciosa MAIONESE DEFUMADA, Pão Macio.',porH:2,porM:1,porC:1},
@@ -731,7 +750,7 @@ function voltarInicio(){
   S.calMes=new Date().getMonth();S.calAno=new Date().getFullYear();
   ['hor-almoco','hor-jantar'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('sel');el.style.opacity='1';el.style.pointerEvents='auto';}});
   // Reset gourmet
-  S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
+  S.gourmet={tipo:null,tipos:{},qtds:{},qtd:12,pagamento:'pix',dataEntrega:null,entrega:null};
   ['gcli-nome','gcli-wpp','gcli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const gqEl=document.getElementById('gqtd-val');if(gqEl)gqEl.textContent='12';
   for(let i=1;i<=4;i++){
@@ -739,7 +758,8 @@ function voltarInicio(){
     const s=document.getElementById('gstep'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
   }
   const gps2b=document.getElementById('gps2b');if(gps2b)gps2b.style.display='none';
-  ['gopt-defumado','gopt-congelado'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  ['gopt-defumado','gopt-congelado','entrega-opt','retirada-opt'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  ['entrega-info','retirada-info'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   // Show home
   document.getElementById('fluxo-evento').style.display='none';
   document.getElementById('fluxo-gourmet').style.display='none';
@@ -1081,11 +1101,18 @@ function confirmarEvento(){
 
 // ===== GOURMET =====
 function selGourmet(tipo){
-  S.gourmet.tipo=tipo;
-  ['defumado','congelado'].forEach(t=>document.getElementById('gopt-'+t).classList.remove('sel'));
-  document.getElementById('gopt-'+tipo).classList.add('sel');
+  if(!S.gourmet.tipos) S.gourmet.tipos={};
+  if(S.gourmet.tipos[tipo]) delete S.gourmet.tipos[tipo];
+  else S.gourmet.tipos[tipo]=true;
+  // Keep legacy .tipo for compat
+  const keys=Object.keys(S.gourmet.tipos);
+  S.gourmet.tipo=keys.length===1?keys[0]:(keys.length>1?'ambos':null);
+  ['defumado','congelado'].forEach(t=>{
+    const el=document.getElementById('gopt-'+t);
+    if(el) el.classList.toggle('sel', !!S.gourmet.tipos[t]);
+  });
   document.getElementById('gmin-alert').style.display='none';
-  atualizarGSubtotal();
+  atualizarGQtyBox();
 }
 
 function chgGQty(d){
@@ -1094,6 +1121,52 @@ function chgGQty(d){
   atualizarGSubtotal();
 }
 
+
+function atualizarGQtyBox(){
+  const tipos=S.gourmet.tipos||{};
+  const sel=Object.keys(tipos);
+  const prods={'defumado':{nome:'Defumado 🔥',preco:9.00},'congelado':{nome:'Congelado ❄️',preco:8.50}};
+  const box=document.getElementById('gqty-box');
+  if(!box)return;
+  if(sel.length===0){box.innerHTML='<p style="font-size:12px;color:var(--text2)">Selecione ao menos uma opção no passo anterior.</p>';return;}
+  let html='<p style="font-size:12px;color:var(--text2);margin-bottom:16px">Mínimo de <strong style="color:var(--brand)">12 unidades no total</strong> por encomenda.</p>';
+  sel.forEach(t=>{
+    const p=prods[t];
+    if(!S.gourmet.qtds) S.gourmet.qtds={};
+    if(!S.gourmet.qtds[t]) S.gourmet.qtds[t]=0;
+    html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-size:13px;font-weight:600">${p.nome}</div><div style="font-size:12px;color:var(--text3)">${fmt(p.preco)}/un</div></div>
+      <div class="qty-selector">
+        <button class="qty-btn" onclick="chgGQtd('${t}',-1)">−</button>
+        <input class="qty-val" type="number" value="${S.gourmet.qtds[t]}" min="0" id="gqv-${t}" oninput="setGQtd('${t}',this.value)">
+        <button class="qty-btn" onclick="chgGQtd('${t}',1)">+</button>
+      </div>
+    </div>`;
+  });
+  const total=sel.reduce((s,t)=>s+(S.gourmet.qtds&&S.gourmet.qtds[t]?S.gourmet.qtds[t]:0),0);
+  const sub=sel.reduce((s,t)=>s+(S.gourmet.qtds&&S.gourmet.qtds[t]?S.gourmet.qtds[t]*prods[t].preco:0),0);
+  html+=`<div style="margin-top:12px;text-align:right;font-size:14px;color:var(--text2)">Total: <strong style="color:var(--brand);font-size:18px">${total} un</strong> &nbsp;|&nbsp; Subtotal: <strong style="color:var(--gold)">${fmt(sub)}</strong></div>`;
+  box.innerHTML=html;
+}
+
+function chgGQtd(tipo,d){
+  if(!S.gourmet.qtds) S.gourmet.qtds={};
+  S.gourmet.qtds[tipo]=Math.max(0,(S.gourmet.qtds[tipo]||0)+d);
+  const el=document.getElementById('gqv-'+tipo);if(el)el.value=S.gourmet.qtds[tipo];
+  atualizarGQtyBox();
+}
+function setGQtd(tipo,v){if(!S.gourmet.qtds)S.gourmet.qtds={};S.gourmet.qtds[tipo]=parseInt(v)||0;atualizarGQtyBox();}
+
+function selEntrega(tipo){
+  S.gourmet.entrega=tipo;
+  ['entrega','retirada'].forEach(t=>{
+    const el=document.getElementById(t+'-opt');if(el)el.classList.remove('sel');
+    const info=document.getElementById(t+'-info');if(info)info.style.display='none';
+  });
+  document.getElementById(tipo+'-opt').classList.add('sel');
+  document.getElementById(tipo+'-info').style.display='block';
+  renderAgendaCongelado();
+}
 function atualizarGSubtotal(){
   const prod=S.gourmetProdutos.find(p=>p.id===S.gourmet.tipo);
   const preco=prod?prod.preco:0;
@@ -1103,21 +1176,22 @@ function atualizarGSubtotal(){
 }
 
 function goGStep(n){
-  if(n===2 && !S.gourmet.tipo){document.getElementById('gmin-alert').style.display='block';return;}
-  // For congelado, show date picker between step 2 and 3
-  if(n===3 && S.gourmet.tipo==='congelado'){
-    if(!S.gourmet.dataEntrega){ goGStep('2b'); return; }
-  }
-  if(n==='2b'){
+  if(n===2){
+    const tipos=Object.keys(S.gourmet.tipos||{});
+    if(tipos.length===0){document.getElementById('gmin-alert').style.display='block';return;}
+    document.getElementById('gmin-alert').style.display='none';
+    atualizarGQtyBox();
     renderAgendaCongelado();
-    document.getElementById('gps2').style.display='none';
-    document.getElementById('gps2b').style.display='block';
-    document.getElementById('gps3').style.display='none';
-    document.getElementById('gps4').style.display='none';
-    document.getElementById('gstep2').classList.add('active');
-    return;
   }
   if(n===3){
+    // Validate qty
+    const tipos=Object.keys(S.gourmet.tipos||{});
+    const totalQtd=tipos.reduce((s,t)=>s+(S.gourmet.qtds&&S.gourmet.qtds[t]?S.gourmet.qtds[t]:0),0);
+    if(totalQtd<12){document.getElementById('gqtd-alert').style.display='block';return;}
+    document.getElementById('gqtd-alert').style.display='none';
+    if(!S.gourmet.dataEntrega){document.getElementById('congelado-date-alert').style.display='block';return;}
+    document.getElementById('congelado-date-alert').style.display='none';
+    if(!S.gourmet.entrega){alert('Selecione entrega ou retirada!');return;}
     const prod=S.gourmetProdutos.find(p=>p.id===S.gourmet.tipo);
     const total=prod.preco*S.gourmet.qtd;
     document.getElementById('gorc-titulo').textContent=prod.nome;
@@ -1160,7 +1234,7 @@ function confirmarGourmet(){
   window.open(`https://wa.me/5547997529934?text=${msg}`,'_blank');
   alert('Encomenda enviada! Entraremos em contato pelo WhatsApp para combinar a entrega.');
   // Reset completo do estado gourmet
-  S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
+  S.gourmet={tipo:null,tipos:{},qtds:{},qtd:12,pagamento:'pix',dataEntrega:null,entrega:null};
   // Resetar campos
   ['gcli-nome','gcli-wpp','gcli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const gqEl=document.getElementById('gqtd-val');if(gqEl)gqEl.textContent='12';
@@ -1173,7 +1247,8 @@ function confirmarGourmet(){
   document.getElementById('fluxo-gourmet').style.display='none';
   document.getElementById('modo-selector').style.display='block';
   document.getElementById('sobre-section').style.display='block';
-  ['gopt-defumado','gopt-congelado'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  ['gopt-defumado','gopt-congelado','entrega-opt','retirada-opt'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  ['entrega-info','retirada-info'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   // Reset alerts
   ['gmin-alert','gqtd-alert','gconf-alert','congelado-date-alert'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
 }
