@@ -253,18 +253,28 @@ table.dt tr:hover td{background:var(--surface2)}
   <div id="fluxo-evento" style="display:none">
     <button class="btn btn-outline btn-sm" style="margin-bottom:16px" onclick="voltarInicio()">← Voltar ao início</button>
     <div class="steps">
-      <div class="step active" id="step1"><span class="step-num">1</span>Cardápio</div>
-      <div class="step" id="step2"><span class="step-num">2</span>Pessoas</div>
-      <div class="step" id="step3"><span class="step-num">3</span>Qtd</div>
-      <div class="step" id="step4"><span class="step-num">4</span>Orçamento</div>
-      <div class="step" id="step5"><span class="step-num">5</span>Confirmar</div>
+      <div class="step active" id="step1"><span class="step-num">1</span>Agenda</div>
+      <div class="step" id="step2"><span class="step-num">2</span>Cardápio</div>
+      <div class="step" id="step3"><span class="step-num">3</span>Pessoas</div>
+      <div class="step" id="step4"><span class="step-num">4</span>Qtd</div>
+      <div class="step" id="step5"><span class="step-num">5</span>Orçamento</div>
+      <div class="step" id="step6"><span class="step-num">6</span>Confirmar</div>
     </div>
     <div id="ps1">
+      <div class="section-title">Escolha a Data do Evento</div>
+      <div class="people-card">
+        <div class="agenda-grid" id="agenda-step1"></div>
+        <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado &nbsp;• Apenas sábados e domingos</p>
+      </div>
+      <div id="agenda-step1-alert" class="alert alert-red" style="display:none">Selecione uma data para continuar.</div>
+      <button class="btn btn-primary btn-block" onclick="goStep(2)">Próximo: Escolher Lanches →</button>
+    </div>
+        <div id="ps2">
       <div class="section-title">Escolha os Lanches</div>
       <div class="card-grid" id="burger-grid"></div>
-      <button class="btn btn-primary btn-block" onclick="goStep(2)">Próximo: Informar Pessoas →</button>
+      <button class="btn btn-primary btn-block" onclick="goStep(3)">Próximo: Informar Pessoas →</button>
     </div>
-    <div id="ps2" style="display:none">
+    <div id="ps3" style="display:none">
       <div class="section-title">Perfil do Evento</div>
       <div class="people-card">
         <p style="font-size:13px;color:var(--text2)">Informe o perfil dos convidados para sugerirmos a quantidade ideal.</p>
@@ -276,21 +286,21 @@ table.dt tr:hover td{background:var(--surface2)}
         <div class="people-total">Total: <strong id="tot-pes">0</strong> pessoas</div>
       </div>
       <div style="display:flex;gap:10px">
-        <button class="btn btn-outline" onclick="goStep(1)">← Voltar</button>
-        <button class="btn btn-primary" style="flex:1" onclick="goStep(3)">Próximo: Sugestão →</button>
+        <button class="btn btn-outline" onclick="goStep(2)">← Voltar</button>
+        <button class="btn btn-primary" style="flex:1" onclick="goStep(4)">Próximo: Sugestão →</button>
       </div>
     </div>
-    <div id="ps3" style="display:none">
+    <div id="ps4" style="display:none">
       <div class="section-title">Quantidades</div>
       <div class="suggestion-box" id="sug-box"></div>
       <div class="people-card" id="qty-box"></div>
       <div id="min-alert" class="alert alert-gold" style="display:none">⚠️ Mínimo de 25 lanches para realizar o evento.</div>
       <div style="display:flex;gap:10px;margin-top:14px">
-        <button class="btn btn-outline" onclick="goStep(2)">← Voltar</button>
-        <button class="btn btn-primary" style="flex:1" onclick="goStep(4)">Ver Orçamento →</button>
+        <button class="btn btn-outline" onclick="goStep(3)">← Voltar</button>
+        <button class="btn btn-primary" style="flex:1" onclick="goStep(5)">Ver Orçamento →</button>
       </div>
     </div>
-    <div id="ps4" style="display:none">
+    <div id="ps5" style="display:none">
       <div class="section-title">Orçamento</div>
       <div id="orc-items"></div>
       <div class="orc-card">
@@ -319,11 +329,11 @@ table.dt tr:hover td{background:var(--surface2)}
         </div>
       </div>
       <div style="display:flex;gap:10px">
-        <button class="btn btn-outline" onclick="goStep(3)">← Voltar</button>
-        <button class="btn btn-primary" style="flex:1" onclick="goStep(5)">Confirmar Pedido →</button>
+        <button class="btn btn-outline" onclick="goStep(4)">← Voltar</button>
+        <button class="btn btn-primary" style="flex:1" onclick="goStep(6)">Confirmar Pedido →</button>
       </div>
     </div>
-    <div id="ps5" style="display:none">
+    <div id="ps6" style="display:none">
       <div class="section-title">Confirmar Pedido</div>
       <div class="orc-card">
         <div class="orc-header"><span class="orc-title">Data do Evento</span></div>
@@ -344,7 +354,7 @@ table.dt tr:hover td{background:var(--surface2)}
       </div>
       <div id="conf-alert" class="alert alert-red" style="display:none"></div>
       <div style="display:flex;gap:10px">
-        <button class="btn btn-outline" onclick="goStep(4)">← Voltar</button>
+        <button class="btn btn-outline" onclick="goStep(5)">← Voltar</button>
         <button class="btn btn-success btn-block" style="flex:1" onclick="confirmarEvento()">✓ Confirmar e Enviar no WhatsApp</button>
       </div>
     </div>
@@ -406,12 +416,27 @@ table.dt tr:hover td{background:var(--surface2)}
         <button class="btn btn-gold" style="flex:1" onclick="goGStep(3)">Ver Orçamento →</button>
       </div>
     </div>
+
+    <div id="gps2b" style="display:none">
+      <div class="section-title">Data de Entrega</div>
+      <div class="people-card">
+        <div id="congelado-regra" style="border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.7"></div>
+        <div class="agenda-grid" id="agenda-congelado"></div>
+        <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Indisponível &nbsp;🟡 Selecionado</p>
+      </div>
+      <div id="congelado-date-alert" class="alert alert-red" style="display:none">Selecione uma data de entrega.</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline" onclick="goGStep(2)">← Voltar</button>
+        <button class="btn btn-gold" style="flex:1" onclick="goGStep(3)">Ver Orçamento →</button>
+      </div>
+    </div>
     <div id="gps3" style="display:none">
       <div class="section-title">Orçamento</div>
       <div class="orc-card">
         <div class="orc-header"><span class="orc-title" id="gorc-titulo">Hambúrguer Gourmet</span><span style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:20px" id="gorc-tot-h">R$ 0,00</span></div>
         <div class="orc-body">
           <div class="orc-line"><span class="orc-label">Versão</span><span class="orc-value" id="gorc-versao">—</span></div>
+          <div class="orc-line" id="gorc-data-line"><span class="orc-label">Data de Entrega</span><span class="orc-value" id="gorc-data">—</span></div>
           <div class="orc-line"><span class="orc-label">Quantidade</span><span class="orc-value" id="gorc-qtd">—</span></div>
           <div class="orc-line"><span class="orc-label">Preço unitário</span><span class="orc-value" id="gorc-unit">—</span></div>
           <div class="orc-total-line"><span style="font-size:14px;color:var(--text2)">TOTAL</span><span class="orc-total-value" id="gorc-total">R$ 0,00</span></div>
@@ -585,7 +610,7 @@ const S = {
   dataEvento:null,
   editLanche:null,
   ftIngs:[],
-  gourmet:{ tipo:null, qtd:12, pagamento:'pix' },
+  gourmet:{ tipo:null, qtd:12, pagamento:'pix', dataEntrega:null },
   lanches:[
     {id:1,nome:'Sister Burger',preco:20,img:SISTER_IMG,desc:'Suculento hambúrguer 150gr Blend da Casa DEFUMADO, Queijo Cheddar DERRETIDO, deliciosa MAIONESE DEFUMADA, Pão Macio.',porH:2,porM:1,porC:1},
     {id:2,nome:'Salads Burger',preco:24,img:SALADS_IMG,desc:'Suculento hambúrguer 150gr Blend da Casa DEFUMADO, Queijo Cheddar DERRETIDO, Bacon, Tomate e Alface frescos, deliciosa MAIONESE DEFUMADA, Pão Macio.',porH:2,porM:1,porC:1},
@@ -658,7 +683,7 @@ function voltarInicio(){
   document.getElementById('modo-selector').style.display='block';
   document.getElementById('sobre-section').style.display='block';
   S.selLanches={};S.qtdLanches={};S.dataEvento=null;
-  S.gourmet={tipo:null,qtd:12,pagamento:'pix'};
+  S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
   ['gopt-defumado','gopt-congelado'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
   renderBurgerGrid();
 }
@@ -677,19 +702,21 @@ function selecionarModo(modo){
   document.getElementById('sobre-section').style.display='none';
   document.getElementById('fluxo-evento').style.display= modo==='evento'?'block':'none';
   document.getElementById('fluxo-gourmet').style.display= modo==='gourmet'?'block':'none';
-  if(modo==='evento') renderBurgerGrid();
+  if(modo==='evento'){ renderBurgerGrid(); renderAgendaStep1(); }
   if(modo==='gourmet') atualizarGSubtotal();
 }
 
 // ===== EVENTO =====
 function goStep(n){
-  if(n===2 && Object.keys(S.selLanches).length===0){alert('Selecione pelo menos um lanche!');return;}
-  // Ao voltar para step 2, limpa qtd para recalcular sugestão
-  if(n===2) S.qtdLanches={};
-  if(n===3) buildSugestao();
-  if(n===4) buildOrcamento();
-  if(n===5) renderAgendaCli();
-  for(let i=1;i<=5;i++){
+  if(n===1){ renderAgendaStep1(); }
+  if(n===2 && !S.dataEvento){ document.getElementById('agenda-step1-alert').style.display='block'; return; }
+  if(n===2){ document.getElementById('agenda-step1-alert').style.display='none'; }
+  if(n===3 && Object.keys(S.selLanches).length===0){alert('Selecione pelo menos um lanche!');return;}
+  if(n===3) S.qtdLanches={};
+  if(n===4) buildSugestao();
+  if(n===5) buildOrcamento();
+  if(n===6){ const el=document.getElementById('confirm-data-evento'); if(el) el.textContent=S.dataEvento||'—'; }
+  for(let i=1;i<=6;i++){
     const p=document.getElementById('ps'+i); if(p) p.style.display=i===n?'block':'none';
     const s=document.getElementById('step'+i); if(s){s.classList.remove('active','done');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('done');}
   }
@@ -776,6 +803,92 @@ function renderPagCond(total){
 
 function selPag(p){S.pagamento=p;['pix','debito','credito'].forEach(x=>document.getElementById('pag-'+x).classList.remove('selected'));document.getElementById('pag-'+p).classList.add('selected');}
 
+
+
+function renderAgendaCongelado(){
+  const g=document.getElementById('agenda-congelado'); if(!g) return;
+  const now=new Date();
+  const dow=now.getDay(); // 0=Dom,1=Seg...6=Sab
+  const hNow=now.getHours()*60+now.getMinutes();
+  const cortaQua=hNow>=17*60; // passou das 17h
+  // Earliest delivery: if today <= Wed 17h => can deliver this Tue? No.
+  // Rule: order until Wed 17h => deliver same week (from Tue next week? re-read:
+  // "para receber na mesma semana aceita até quarta 17h"
+  // "se fizer depois de quarta 17h, recebe a partir de terça da próxima semana"
+  // So deliveries are Tue-Sat (Mon-Sat?). Let's allow any day from earliest.
+  // Earliest delivery date calculation:
+  let earliestDate = new Date(now);
+  if(dow===3 && cortaQua){ // Wed after 17h -> next Tuesday
+    earliestDate.setDate(now.getDate() + (7-3+2)); // next tuesday = +6 days
+  } else if(dow>3 || (dow===3 && cortaQua)){ // Thu/Fri/Sat/Sun -> next Tuesday
+    const daysToTue = (7-dow+2)%7 || 7;
+    earliestDate.setDate(now.getDate()+daysToTue);
+  } else { // Mon/Tue/Wed before 17h -> can deliver from tomorrow
+    earliestDate.setDate(now.getDate()+1);
+  }
+
+  // Show rule message
+  const regraEl=document.getElementById('congelado-regra');
+  if(dow<3 || (dow===3 && !cortaQua)){
+    regraEl.style.background='rgba(212,224,48,.08)';regraEl.style.border='1px solid rgba(212,224,48,.3)';regraEl.style.color='var(--text2)';
+    regraEl.innerHTML='✅ Pedidos aceitos até <strong style="color:var(--brand)">quarta-feira às 17h</strong> para entrega na mesma semana. Selecione sua data preferida abaixo.';
+  } else {
+    regraEl.style.background='rgba(231,76,60,.08)';regraEl.style.border='1px solid rgba(231,76,60,.3)';regraEl.style.color='var(--text2)';
+    regraEl.innerHTML='⚠️ O prazo desta semana encerrou. Seu pedido será entregue a partir de <strong style="color:var(--brand)">terça-feira da próxima semana</strong>.';
+  }
+
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  let h=dias.map(d=>`<div class="dia hdr">${d}</div>`).join('');
+  const first=new Date(now.getFullYear(),now.getMonth(),1);
+  const last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  // Show next 2 weeks from today
+  const showFrom=new Date(now.getFullYear(),now.getMonth(),1);
+  for(let i=0;i<first.getDay();i++) h+=`<div class="dia vz"></div>`;
+  for(let d=1;d<=last;d++){
+    const date=new Date(now.getFullYear(),now.getMonth(),d);
+    const k=`${now.getFullYear()}-${now.getMonth()+1}-${d}`;
+    const sel=S.gourmet.dataEntrega===k;
+    const available = date >= earliestDate && date.setHours(0,0,0,0) >= new Date().setHours(0,0,0,0);
+    const dateCheck=new Date(now.getFullYear(),now.getMonth(),d);
+    const isAvail = dateCheck >= new Date(earliestDate.getFullYear(),earliestDate.getMonth(),earliestDate.getDate());
+    if(!isAvail){
+      h+=`<div class="dia ocup" style="opacity:.35"><div class="dia-num">${d}</div></div>`;
+    } else {
+      h+=`<div class="dia ${sel?'sel':'disp'}" onclick="selDataCongelado('${k}')"><div class="dia-num">${d}</div><div class="dia-lbl">${sel?'✓':''}</div></div>`;
+    }
+  }
+  g.innerHTML=h;
+}
+
+function selDataCongelado(k){
+  S.gourmet.dataEntrega=k;
+  renderAgendaCongelado();
+}
+function renderAgendaStep1(){
+  const g=document.getElementById('agenda-step1'); if(!g) return;
+  const now=new Date();const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  let h=dias.map(d=>`<div class="dia hdr">${d}</div>`).join('');
+  const first=new Date(now.getFullYear(),now.getMonth(),1);
+  const last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  for(let i=0;i<first.getDay();i++) h+=`<div class="dia vz"></div>`;
+  for(let d=1;d<=last;d++){
+    const date=new Date(now.getFullYear(),now.getMonth(),d);
+    const dow=date.getDay();
+    const k=`${now.getFullYear()}-${now.getMonth()+1}-${d}`;
+    const ocup=S.diasOcupados.includes(k)||S.pedidos.some(p=>p.data===k&&p.status==='confirmado');
+    const sel=S.dataEvento===k;
+    const past=d<now.getDate();
+    const fimDeSemana=(dow===0||dow===6);
+    if(!fimDeSemana||past){
+      h+=`<div class="dia ocup" style="opacity:.3"><div class="dia-num">${d}</div></div>`;
+    } else if(ocup){
+      h+=`<div class="dia ocup"><div class="dia-num">${d}</div><div class="dia-lbl">Ocup</div></div>`;
+    } else {
+      h+=`<div class="dia ${sel?'sel':'disp'}" onclick="selData('${k}','step1')"><div class="dia-num">${d}</div><div class="dia-lbl">${sel?'✓':dow===0?'Dom':'Sáb'}</div></div>`;
+    }
+  }
+  g.innerHTML=h;
+}
 function renderAgendaCli(){
   const g=document.getElementById('agenda-cli');
   const now=new Date();const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -802,7 +915,11 @@ function renderAgendaCli(){
   g.innerHTML=h;
 }
 
-function selData(k){S.dataEvento=k;renderAgendaCli();}
+function selData(k,src){
+  S.dataEvento=k;
+  if(src==='step1') renderAgendaStep1();
+  else renderAgendaCli();
+}
 
 function confirmarEvento(){
   const nome=document.getElementById('cli-nome').value.trim();
@@ -859,16 +976,31 @@ function atualizarGSubtotal(){
 
 function goGStep(n){
   if(n===2 && !S.gourmet.tipo){document.getElementById('gmin-alert').style.display='block';return;}
+  // For congelado, show date picker between step 2 and 3
+  if(n===3 && S.gourmet.tipo==='congelado'){
+    if(!S.gourmet.dataEntrega){ goGStep('2b'); return; }
+  }
+  if(n==='2b'){
+    renderAgendaCongelado();
+    document.getElementById('gps2').style.display='none';
+    document.getElementById('gps2b').style.display='block';
+    document.getElementById('gps3').style.display='none';
+    document.getElementById('gps4').style.display='none';
+    document.getElementById('gstep2').classList.add('active');
+    return;
+  }
   if(n===3){
     const prod=S.gourmetProdutos.find(p=>p.id===S.gourmet.tipo);
     const total=prod.preco*S.gourmet.qtd;
     document.getElementById('gorc-titulo').textContent=prod.nome;
     document.getElementById('gorc-tot-h').textContent=fmt(total);
     document.getElementById('gorc-versao').textContent=prod.nome;
+    const dataEl=document.getElementById('gorc-data'); if(dataEl) dataEl.textContent=S.gourmet.dataEntrega||'A combinar';
     document.getElementById('gorc-qtd').textContent=S.gourmet.qtd+' unidades';
     document.getElementById('gorc-unit').textContent=fmt(prod.preco);
     document.getElementById('gorc-total').textContent=fmt(total);
   }
+  document.getElementById('gps2b').style.display='none';
   for(let i=1;i<=4;i++){
     const p=document.getElementById('gps'+i);if(p)p.style.display=i===n?'block':'none';
     const s=document.getElementById('gstep'+i);if(s){s.classList.remove('active','done');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('done');}
@@ -899,7 +1031,7 @@ function confirmarGourmet(){
   );
   window.open(`https://wa.me/5547997529934?text=${msg}`,'_blank');
   alert('Encomenda enviada! Entraremos em contato pelo WhatsApp para combinar a entrega.');
-  S.gourmet={tipo:null,qtd:12,pagamento:'pix'};
+  S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
   document.getElementById('fluxo-gourmet').style.display='none';
   document.getElementById('modo-selector').style.display='block';
   ['gopt-defumado','gopt-congelado'].forEach(id=>document.getElementById(id).classList.remove('sel'));
