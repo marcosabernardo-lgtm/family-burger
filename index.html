@@ -264,7 +264,7 @@ table.dt tr:hover td{background:var(--surface2)}
       <div class="section-title">Escolha a Data do Evento</div>
       <div class="people-card">
         <div class="agenda-grid" id="agenda-step1"></div>
-        <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado &nbsp;• Apenas sábados e domingos</p>
+        <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado &nbsp;• Sábados e domingos • Mínimo 7 dias de antecedência</p>
       </div>
       <div id="agenda-step1-alert" class="alert alert-red" style="display:none">Selecione uma data para continuar.</div>
       <button class="btn btn-primary btn-block" onclick="goStep(2)">Próximo: Escolher Lanches →</button>
@@ -339,7 +339,7 @@ table.dt tr:hover td{background:var(--surface2)}
         <div class="orc-header"><span class="orc-title">Data do Evento</span></div>
         <div class="orc-body">
           <div class="agenda-grid" id="agenda-cli"></div>
-          <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado &nbsp;• Apenas sábados e domingos</p>
+          <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado &nbsp;• Sábados e domingos • Mínimo 7 dias de antecedência</p>
         </div>
       </div>
       <div class="orc-card">
@@ -877,9 +877,10 @@ function renderAgendaStep1(){
     const k=`${now.getFullYear()}-${now.getMonth()+1}-${d}`;
     const ocup=S.diasOcupados.includes(k)||S.pedidos.some(p=>p.data===k&&p.status==='confirmado');
     const sel=S.dataEvento===k;
-    const past=d<now.getDate();
+    const minDate=new Date(now); minDate.setDate(now.getDate()+7); minDate.setHours(0,0,0,0);
     const fimDeSemana=(dow===0||dow===6);
-    if(!fimDeSemana||past){
+    const tooSoon=date<minDate;
+    if(!fimDeSemana||tooSoon){
       h+=`<div class="dia ocup" style="opacity:.3"><div class="dia-num">${d}</div></div>`;
     } else if(ocup){
       h+=`<div class="dia ocup"><div class="dia-num">${d}</div><div class="dia-lbl">Ocup</div></div>`;
