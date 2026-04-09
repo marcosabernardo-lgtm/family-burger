@@ -266,8 +266,31 @@ table.dt tr:hover td{background:var(--surface2)}
         <div class="agenda-grid" id="agenda-step1"></div>
         <p style="font-size:11px;color:var(--text3);margin-top:4px">🟢 Disponível &nbsp;🔴 Ocupado &nbsp;🟡 Selecionado &nbsp;• Sábados e domingos • Mínimo 7 dias de antecedência</p>
       </div>
-      <div id="agenda-step1-alert" class="alert alert-red" style="display:none">Selecione uma data para continuar.</div>
-      <button class="btn btn-primary btn-block" onclick="goStep(2)">Próximo: Escolher Lanches →</button>
+      <!-- HORARIO PICKER -->
+      <div id="horario-picker" style="display:none;margin-top:20px">
+        <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px">Escolha o horário do evento:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div class="gourmet-opt" id="hor-almoco" onclick="selHorario('almoco')">
+            <div style="font-size:30px;margin-bottom:8px">☀️</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)" id="label-almoco">Almoço</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--brand);margin-top:4px">12:00h</div>
+            <div class="gourmet-opt-check" style="margin-top:6px">✓ Selecionado</div>
+          </div>
+          <div class="gourmet-opt" id="hor-jantar" onclick="selHorario('jantar')">
+            <div style="font-size:30px;margin-bottom:8px">🌙</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)" id="label-jantar">Jantar</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--brand);margin-top:4px">19:00h</div>
+            <div class="gourmet-opt-check" style="margin-top:6px">✓ Selecionado</div>
+          </div>
+        </div>
+        <div style="background:var(--surface2);border-radius:10px;padding:14px;font-size:12px;color:var(--text2);line-height:1.7">
+          ℹ️ Nossa equipe prepara todos os lanches, realiza a limpeza e se retira ao término do serviço.<br>
+          Sempre levamos <strong style="color:var(--brand)">+15 lanches extras</strong> para eventuais repetições.
+        </div>
+      </div>
+
+      <div id="agenda-step1-alert" class="alert alert-red" style="display:none;margin-top:12px">Selecione uma data e horário para continuar.</div>
+      <button class="btn btn-primary btn-block" onclick="goStep(2)" style="margin-top:14px">Próximo: Escolher Lanches →</button>
     </div>
         <div id="ps2">
       <div class="section-title">Escolha os Lanches</div>
@@ -622,6 +645,7 @@ const S = {
   pessoas:{h:0,m:0,c:0},
   pagamento:'pix',
   dataEvento:null,
+  horarioEvento:null,
   editLanche:null,
   ftIngs:[],
   gourmet:{ tipo:null, qtd:12, pagamento:'pix', dataEntrega:null },
@@ -693,7 +717,7 @@ const S = {
 
 function voltarInicio(){
   // Reset evento
-  S.selLanches={};S.qtdLanches={};S.dataEvento=null;S.pessoas={h:0,m:0,c:0};
+  S.selLanches={};S.qtdLanches={};S.dataEvento=null;S.horarioEvento=null;S.pessoas={h:0,m:0,c:0};
   ['cli-nome','cli-wpp','cli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['qtd-h','qtd-m','qtd-c'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=0;});
   const totEl=document.getElementById('tot-pes');if(totEl)totEl.textContent='0';
@@ -701,6 +725,8 @@ function voltarInicio(){
     const p=document.getElementById('ps'+i);if(p)p.style.display=i===1?'block':'none';
     const s=document.getElementById('step'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
   }
+  const hpick=document.getElementById('horario-picker');if(hpick)hpick.style.display='none';
+  ['hor-almoco','hor-jantar'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('sel');el.style.opacity='1';el.style.pointerEvents='auto';}});
   // Reset gourmet
   S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
   ['gcli-nome','gcli-wpp','gcli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -740,13 +766,13 @@ function selecionarModo(modo){
 // ===== EVENTO =====
 function goStep(n){
   if(n===1){ renderAgendaStep1(); }
-  if(n===2 && !S.dataEvento){ document.getElementById('agenda-step1-alert').style.display='block'; return; }
+  if(n===2 && (!S.dataEvento||!S.horarioEvento)){ document.getElementById('agenda-step1-alert').style.display='block'; return; }
   if(n===2){ document.getElementById('agenda-step1-alert').style.display='none'; }
   if(n===3 && Object.keys(S.selLanches).length===0){alert('Selecione pelo menos um lanche!');return;}
   if(n===3) S.qtdLanches={};
   if(n===4) buildSugestao();
   if(n===5) buildOrcamento();
-  if(n===6){ const el=document.getElementById('confirm-data-evento'); if(el) el.textContent=S.dataEvento||'—'; }
+  if(n===6){ const el=document.getElementById('confirm-data-evento'); if(el) el.textContent=S.dataEvento||'—'; const hel=document.getElementById('confirm-horario'); if(hel) hel.textContent=S.horarioEvento==='almoco'?'☀️ Almoço 12:00h':'🌙 Jantar 19:00h'; }
   for(let i=1;i<=6;i++){
     const p=document.getElementById('ps'+i); if(p) p.style.display=i===n?'block':'none';
     const s=document.getElementById('step'+i); if(s){s.classList.remove('active','done');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('done');}
@@ -919,10 +945,13 @@ function renderAgendaStep1(){
     const minDate=new Date(now); minDate.setDate(now.getDate()+7); minDate.setHours(0,0,0,0);
     const fimDeSemana=(dow===0||dow===6);
     const tooSoon=date<minDate;
+    const almocoOk=S.pedidos.some(p=>p.data===k&&p.horario==='almoco'&&p.status!=='recusado');
+    const jantarOk=S.pedidos.some(p=>p.data===k&&p.horario==='jantar'&&p.status!=='recusado');
+    const diaLotado=almocoOk&&jantarOk;
     if(!fimDeSemana||tooSoon){
       h+=`<div class="dia ocup" style="opacity:.3"><div class="dia-num">${d}</div></div>`;
-    } else if(ocup){
-      h+=`<div class="dia ocup"><div class="dia-num">${d}</div><div class="dia-lbl">Ocup</div></div>`;
+    } else if(diaLotado){
+      h+=`<div class="dia ocup"><div class="dia-num">${d}</div><div class="dia-lbl">Lotado</div></div>`;
     } else {
       h+=`<div class="dia ${sel?'sel':'disp'}" onclick="selData('${k}','step1')"><div class="dia-num">${d}</div><div class="dia-lbl">${sel?'✓':dow===0?'Dom':'Sáb'}</div></div>`;
     }
@@ -973,7 +1002,7 @@ function confirmarEvento(){
   let sub=0;
   const itens=S.lanches.filter(l=>S.selLanches[l.id]).map(l=>{const q=S.qtdLanches[l.id]||0;sub+=l.preco*q;return `${l.nome} x${q}`;  });
   const total=sub+150;
-  const pedido={id:nid(S.pedidos),tipo:'evento',nome,wpp,obs,data:S.dataEvento,itens,subtotal:sub,total,pagamento:S.pagamento,status:'pendente',criadoEm:new Date().toLocaleString('pt-BR')};
+  const pedido={id:nid(S.pedidos),tipo:'evento',nome,wpp,obs,data:S.dataEvento,horario:S.horarioEvento,itens,subtotal:sub,total,pagamento:S.pagamento,status:'pendente',criadoEm:new Date().toLocaleString('pt-BR')};
   S.pedidos.push(pedido);
   document.getElementById('badge-pedidos').textContent=S.pedidos.filter(p=>p.status==='pendente').length;
   const msg=encodeURIComponent(
@@ -986,7 +1015,7 @@ function confirmarEvento(){
   window.open(`https://wa.me/5547997529934?text=${msg}`,'_blank');
   alert('Pedido enviado! Entraremos em contato pelo WhatsApp em breve.');
   // Reset completo do estado do evento
-  S.selLanches={};S.qtdLanches={};S.dataEvento=null;S.pessoas={h:0,m:0,c:0};S.pagamento='pix';
+  S.selLanches={};S.qtdLanches={};S.dataEvento=null;S.horarioEvento=null;S.pessoas={h:0,m:0,c:0};S.pagamento='pix';
   // Resetar campos de formulário
   ['cli-nome','cli-wpp','cli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['qtd-h','qtd-m','qtd-c'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=0;});
@@ -1135,7 +1164,7 @@ function renderPedidos(){
       <td><span class="badge ${p.tipo==='evento'?'badge-blue':'badge-gold'}">${p.tipo==='evento'?'Evento':'Gourmet'}</span></td>
       <td>#${p.id}</td>
       <td>${p.nome}<br><span style="color:var(--text3);font-size:10px">${p.wpp}</span></td>
-      <td>${p.data}</td>
+      <td>${p.data}${p.horario?`<br><span style='font-size:10px;color:var(--text3)'>${p.horario==='almoco'?'☀️ 12:00h':'🌙 19:00h'}</span>`:''}</td>
       <td style="color:var(--gold);font-weight:600">${fmt(p.total)}</td>
       <td><span class="badge ${p.status==='pendente'?'badge-gold':p.status==='confirmado'?'badge-green':'badge-red'}">${p.status}</span></td>
       <td style="display:flex;gap:4px;flex-wrap:wrap">
