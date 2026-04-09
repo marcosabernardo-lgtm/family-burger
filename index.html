@@ -313,13 +313,20 @@ table.dt tr:hover td{background:var(--surface2)}
       <div class="orc-card">
         <div class="orc-header"><span class="orc-title">Forma de Pagamento</span></div>
         <div class="orc-body">
-          <div style="background:var(--surface2);border:2px solid var(--brand);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:4px">
+          <div style="background:var(--surface2);border:2px solid var(--brand);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:12px">
             <div style="font-size:32px">📱</div>
             <div>
-              <div style="font-weight:700;font-size:15px;color:var(--text)">PIX</div>
-              <div style="font-size:13px;color:var(--text2);margin-top:2px">Chave: <strong style="color:var(--brand)">47997434973</strong> — Nubank</div>
+              <div style="font-weight:700;font-size:15px;color:var(--text)">PIX — Nubank</div>
+              <div style="font-size:14px;color:var(--text2);margin-top:2px">Chave: <strong style="color:var(--brand)">47997434973</strong></div>
               <div style="font-size:11px;color:var(--text3);margin-top:2px">Sem taxas adicionais</div>
             </div>
+          </div>
+          <div style="background:rgba(212,224,48,.07);border:1px solid rgba(212,224,48,.3);border-radius:10px;padding:14px;font-size:13px;line-height:1.7;color:var(--text2)">
+            <strong style="color:var(--brand)">⚠️ Importante — Como confirmar sua reserva:</strong><br>
+            1. Após enviar o pedido, realize o PIX de <strong style="color:var(--text)" id="pix-reserva-val">10%</strong> para a chave acima<br>
+            2. Envie o <strong style="color:var(--text)">comprovante pelo WhatsApp</strong><br>
+            3. Sua data será confirmada somente após a validação do comprovante<br><br>
+            <span style="color:var(--text3);font-size:11px">A data fica reservada provisoriamente por <strong style="color:var(--text2)">24 horas</strong> aguardando o comprovante.</span>
           </div>
           <div class="pag-cond-box" id="pag-cond-box"></div>
           <div class="respons-info" style="margin-top:12px">
@@ -445,13 +452,20 @@ table.dt tr:hover td{background:var(--surface2)}
       <div class="orc-card">
         <div class="orc-header"><span class="orc-title">Forma de Pagamento</span></div>
         <div class="orc-body">
-          <div style="background:var(--surface2);border:2px solid var(--brand);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:4px">
+          <div style="background:var(--surface2);border:2px solid var(--brand);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:12px">
             <div style="font-size:32px">📱</div>
             <div>
-              <div style="font-weight:700;font-size:15px;color:var(--text)">PIX</div>
-              <div style="font-size:13px;color:var(--text2);margin-top:2px">Chave: <strong style="color:var(--brand)">47997434973</strong> — Nubank</div>
+              <div style="font-weight:700;font-size:15px;color:var(--text)">PIX — Nubank</div>
+              <div style="font-size:14px;color:var(--text2);margin-top:2px">Chave: <strong style="color:var(--brand)">47997434973</strong></div>
               <div style="font-size:11px;color:var(--text3);margin-top:2px">Sem taxas adicionais</div>
             </div>
+          </div>
+          <div style="background:rgba(212,224,48,.07);border:1px solid rgba(212,224,48,.3);border-radius:10px;padding:14px;font-size:13px;line-height:1.7;color:var(--text2)">
+            <strong style="color:var(--brand)">⚠️ Importante — Como confirmar sua reserva:</strong><br>
+            1. Após enviar o pedido, realize o PIX de <strong style="color:var(--text)" id="pix-reserva-val">10%</strong> para a chave acima<br>
+            2. Envie o <strong style="color:var(--text)">comprovante pelo WhatsApp</strong><br>
+            3. Sua data será confirmada somente após a validação do comprovante<br><br>
+            <span style="color:var(--text3);font-size:11px">A data fica reservada provisoriamente por <strong style="color:var(--text2)">24 horas</strong> aguardando o comprovante.</span>
           </div>
           <div style="background:var(--surface2);border-radius:10px;padding:14px;margin-top:10px;font-size:13px;color:var(--text2)">
             💡 Após confirmar, entraremos em contato pelo WhatsApp para combinar a data e entrega/retirada.
@@ -808,12 +822,20 @@ function buildOrcamento(){
   document.getElementById('orc-sub').textContent=fmt(sub);
   document.getElementById('orc-total').textContent=fmt(total);
   renderPagCond(total);
+  setTimeout(()=>{const el=document.getElementById('pix-reserva-val');if(el)el.textContent=fmt(total*0.10);},50);
 }
 
 function renderPagCond(total){
   document.getElementById('pag-cond-box').innerHTML=`
     <p style="font-size:11px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:600">Cronograma de Pagamento</p>
-    <div class="pag-cond-row"><span class="pag-cond-pct">10%</span><span class="pag-cond-desc">Para reservar a data</span><span class="pag-cond-val">${fmt(total*0.10)}</span></div>
+    <div class="pag-cond-row" style="background:rgba(212,224,48,.06);border-radius:8px;padding:10px 6px;margin-bottom:4px">
+      <span class="pag-cond-pct">10%</span>
+      <div style="flex:1;padding:0 10px">
+        <div style="color:var(--text);font-size:13px;font-weight:600">Reserva da data</div>
+        <div style="color:var(--text3);font-size:11px;margin-top:2px">⚠️ Envie o comprovante PIX para confirmar sua reserva</div>
+      </div>
+      <span class="pag-cond-val">${fmt(total*0.10)}</span>
+    </div>
     <div class="pag-cond-row"><span class="pag-cond-pct">40%</span><span class="pag-cond-desc">7 dias antes do evento</span><span class="pag-cond-val">${fmt(total*0.40)}</span></div>
     <div class="pag-cond-row"><span class="pag-cond-pct">50%</span><span class="pag-cond-desc">No dia do evento</span><span class="pag-cond-val">${fmt(total*0.50)}</span></div>`;
 }
