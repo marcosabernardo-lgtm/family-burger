@@ -646,6 +646,8 @@ const S = {
   pagamento:'pix',
   dataEvento:null,
   horarioEvento:null,
+  calMes:new Date().getMonth(),
+  calAno:new Date().getFullYear(),
   editLanche:null,
   ftIngs:[],
   gourmet:{ tipo:null, qtd:12, pagamento:'pix', dataEntrega:null },
@@ -726,6 +728,7 @@ function voltarInicio(){
     const s=document.getElementById('step'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
   }
   const hpick=document.getElementById('horario-picker');if(hpick)hpick.style.display='none';
+  S.calMes=new Date().getMonth();S.calAno=new Date().getFullYear();
   ['hor-almoco','hor-jantar'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('sel');el.style.opacity='1';el.style.pointerEvents='auto';}});
   // Reset gourmet
   S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
@@ -931,25 +934,33 @@ function selDataCongelado(k){
 }
 function renderAgendaStep1(){
   const g=document.getElementById('agenda-step1'); if(!g) return;
-  const now=new Date();const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  let h=dias.map(d=>`<div class="dia hdr">${d}</div>`).join('');
-  const first=new Date(now.getFullYear(),now.getMonth(),1);
-  const last=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const now=new Date();
+  const mes=S.calMes; const ano=S.calAno;
+  const nomeMes=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  // Nav header
+  let h=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 4px">
+    <button onclick="navMes(-1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:16px">‹</button>
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text)">${nomeMes[mes]} ${ano}</span>
+    <button onclick="navMes(1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:16px">›</button>
+  </div>`;
+  h+=dias.map(d=>`<div class="dia hdr">${d}</div>`).join('');
+  const first=new Date(ano,mes,1);
+  const last=new Date(ano,mes+1,0).getDate();
   for(let i=0;i<first.getDay();i++) h+=`<div class="dia vz"></div>`;
   for(let d=1;d<=last;d++){
-    const date=new Date(now.getFullYear(),now.getMonth(),d);
+    const date=new Date(ano,mes,d);
     const dow=date.getDay();
-    const k=`${now.getFullYear()}-${now.getMonth()+1}-${d}`;
-    const ocup=S.diasOcupados.includes(k)||S.pedidos.some(p=>p.data===k&&p.status==='confirmado');
-    const sel=S.dataEvento===k;
+    const k=`${ano}-${mes+1}-${d}`;
     const minDate=new Date(now); minDate.setDate(now.getDate()+7); minDate.setHours(0,0,0,0);
     const fimDeSemana=(dow===0||dow===6);
     const tooSoon=date<minDate;
     const almocoOk=S.pedidos.some(p=>p.data===k&&p.horario==='almoco'&&p.status!=='recusado');
     const jantarOk=S.pedidos.some(p=>p.data===k&&p.horario==='jantar'&&p.status!=='recusado');
     const diaLotado=almocoOk&&jantarOk;
+    const sel=S.dataEvento===k;
     if(!fimDeSemana||tooSoon){
-      h+=`<div class="dia ocup" style="opacity:.3"><div class="dia-num">${d}</div></div>`;
+      h+=`<div class="dia ocup" style="opacity:.25"><div class="dia-num">${d}</div></div>`;
     } else if(diaLotado){
       h+=`<div class="dia ocup"><div class="dia-num">${d}</div><div class="dia-lbl">Lotado</div></div>`;
     } else {
@@ -958,6 +969,19 @@ function renderAgendaStep1(){
   }
   g.innerHTML=h;
 }
+
+function navMes(dir){
+  S.calMes+=dir;
+  if(S.calMes>11){S.calMes=0;S.calAno++;}
+  if(S.calMes<0){S.calMes=11;S.calAno--;}
+  // Don't go before current month
+  const now=new Date();
+  if(S.calAno<now.getFullYear()||(S.calAno===now.getFullYear()&&S.calMes<now.getMonth())){
+    S.calMes=now.getMonth();S.calAno=now.getFullYear();
+  }
+  renderAgendaStep1();
+}
+
 function renderAgendaCli(){
   const g=document.getElementById('agenda-cli');
   const now=new Date();const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -986,8 +1010,30 @@ function renderAgendaCli(){
 
 function selData(k,src){
   S.dataEvento=k;
-  if(src==='step1') renderAgendaStep1();
-  else renderAgendaCli();
+  S.horarioEvento=null;
+  ['hor-almoco','hor-jantar'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  if(src==='step1'){
+    renderAgendaStep1();
+    const picker=document.getElementById('horario-picker');
+    if(picker) picker.style.display='block';
+    // Check slot availability
+    const almocoTaken=S.pedidos.some(p=>p.data===k&&p.horario==='almoco'&&p.status!=='recusado');
+    const jantarTaken=S.pedidos.some(p=>p.data===k&&p.horario==='jantar'&&p.status!=='recusado');
+    const ha=document.getElementById('hor-almoco');
+    const hj=document.getElementById('hor-jantar');
+    const la=document.getElementById('label-almoco');
+    const lj=document.getElementById('label-jantar');
+    if(ha){if(almocoTaken){ha.style.opacity='.35';ha.style.pointerEvents='none';if(la)la.textContent='Almoço — Ocupado';}else{ha.style.opacity='1';ha.style.pointerEvents='auto';if(la)la.textContent='Almoço';}}
+    if(hj){if(jantarTaken){hj.style.opacity='.35';hj.style.pointerEvents='none';if(lj)lj.textContent='Jantar — Ocupado';}else{hj.style.opacity='1';hj.style.pointerEvents='auto';if(lj)lj.textContent='Jantar';}}
+  } else {
+    renderAgendaCli();
+  }
+}
+
+function selHorario(h){
+  S.horarioEvento=h;
+  ['hor-almoco','hor-jantar'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  const el=document.getElementById('hor-'+h);if(el)el.classList.add('sel');
 }
 
 function confirmarEvento(){
