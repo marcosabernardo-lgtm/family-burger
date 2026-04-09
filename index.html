@@ -678,13 +678,30 @@ const S = {
 
 
 function voltarInicio(){
+  // Reset evento
+  S.selLanches={};S.qtdLanches={};S.dataEvento=null;S.pessoas={h:0,m:0,c:0};
+  ['cli-nome','cli-wpp','cli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['qtd-h','qtd-m','qtd-c'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=0;});
+  const totEl=document.getElementById('tot-pes');if(totEl)totEl.textContent='0';
+  for(let i=1;i<=6;i++){
+    const p=document.getElementById('ps'+i);if(p)p.style.display=i===1?'block':'none';
+    const s=document.getElementById('step'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
+  }
+  // Reset gourmet
+  S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
+  ['gcli-nome','gcli-wpp','gcli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const gqEl=document.getElementById('gqtd-val');if(gqEl)gqEl.textContent='12';
+  for(let i=1;i<=4;i++){
+    const p=document.getElementById('gps'+i);if(p)p.style.display=i===1?'block':'none';
+    const s=document.getElementById('gstep'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
+  }
+  const gps2b=document.getElementById('gps2b');if(gps2b)gps2b.style.display='none';
+  ['gopt-defumado','gopt-congelado'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  // Show home
   document.getElementById('fluxo-evento').style.display='none';
   document.getElementById('fluxo-gourmet').style.display='none';
   document.getElementById('modo-selector').style.display='block';
   document.getElementById('sobre-section').style.display='block';
-  S.selLanches={};S.qtdLanches={};S.dataEvento=null;
-  S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
-  ['gopt-defumado','gopt-congelado'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
   renderBurgerGrid();
 }
 function showView(v,el){
@@ -946,10 +963,23 @@ function confirmarEvento(){
   );
   window.open(`https://wa.me/5547997529934?text=${msg}`,'_blank');
   alert('Pedido enviado! Entraremos em contato pelo WhatsApp em breve.');
-  S.selLanches={};S.qtdLanches={};S.dataEvento=null;
+  // Reset completo do estado do evento
+  S.selLanches={};S.qtdLanches={};S.dataEvento=null;S.pessoas={h:0,m:0,c:0};S.pagamento='pix';
+  // Resetar campos de formulário
+  ['cli-nome','cli-wpp','cli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['qtd-h','qtd-m','qtd-c'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=0;});
+  const totEl=document.getElementById('tot-pes');if(totEl)totEl.textContent='0';
+  // Voltar ao início e resetar steps
   document.getElementById('fluxo-evento').style.display='none';
   document.getElementById('modo-selector').style.display='block';
+  document.getElementById('sobre-section').style.display='block';
+  // Resetar todos os steps para o estado inicial
+  for(let i=1;i<=6;i++){
+    const p=document.getElementById('ps'+i);if(p)p.style.display=i===1?'block':'none';
+    const s=document.getElementById('step'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
+  }
   renderBurgerGrid();
+  renderAgendaStep1();
 }
 
 // ===== GOURMET =====
@@ -1032,10 +1062,23 @@ function confirmarGourmet(){
   );
   window.open(`https://wa.me/5547997529934?text=${msg}`,'_blank');
   alert('Encomenda enviada! Entraremos em contato pelo WhatsApp para combinar a entrega.');
+  // Reset completo do estado gourmet
   S.gourmet={tipo:null,qtd:12,pagamento:'pix',dataEntrega:null};
+  // Resetar campos
+  ['gcli-nome','gcli-wpp','gcli-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const gqEl=document.getElementById('gqtd-val');if(gqEl)gqEl.textContent='12';
+  // Resetar steps gourmet
+  for(let i=1;i<=4;i++){
+    const p=document.getElementById('gps'+i);if(p)p.style.display=i===1?'block':'none';
+    const s=document.getElementById('gstep'+i);if(s){s.classList.remove('active','done');if(i===1)s.classList.add('active');}
+  }
+  const gps2b=document.getElementById('gps2b');if(gps2b)gps2b.style.display='none';
   document.getElementById('fluxo-gourmet').style.display='none';
   document.getElementById('modo-selector').style.display='block';
-  ['gopt-defumado','gopt-congelado'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  document.getElementById('sobre-section').style.display='block';
+  ['gopt-defumado','gopt-congelado'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('sel');});
+  // Reset alerts
+  ['gmin-alert','gqtd-alert','gconf-alert','congelado-date-alert'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
 }
 
 // ===== PAINEL =====
