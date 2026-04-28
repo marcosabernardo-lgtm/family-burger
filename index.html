@@ -832,10 +832,14 @@ async function carregarPedidos() {
     status: p.status || 'pendente',
     criadoEm: p.criado_em ? new Date(p.criado_em).toLocaleString('pt-BR') : ''
   }));
-  document.getElementById('badge-pedidos').textContent = S.pedidos.filter(p => p.status === 'pendente').length || '';
+  const pendentes = S.pedidos.filter(p => p.status === 'pendente').length;
+  const badge = document.getElementById('badge-pedidos');
+  if (badge) badge.textContent = pendentes || '';
   // Re-render painel if open
   const tabPedidos = document.getElementById('tab-pedidos');
   if (tabPedidos && tabPedidos.style.display !== 'none') renderPedidos();
+  // Re-render agenda
+  renderAgendaStep1();
 }
 
 // Salvar pedido no banco
@@ -883,12 +887,30 @@ async function liberarDiaDB(data) {
   if (error) console.error('Erro liberar dia:', error);
 }
 
-// Realtime
+// Realtime + polling fallback
 function iniciarRealtime() {
-  supa.channel('changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, () => carregarPedidos())
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'dias_bloqueados' }, () => carregarDiasBloqueados())
-    .subscribe();
+  // Realtime subscription
+  const channel = supa.channel('db-changes')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pedidos' }, (payload) => {
+      console.log('Realtime INSERT pedido:', payload);
+      carregarPedidos();
+    })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos' }, (payload) => {
+      console.log('Realtime UPDATE pedido:', payload);
+      carregarPedidos();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'dias_bloqueados' }, () => {
+      carregarDiasBloqueados();
+    })
+    .subscribe((status) => {
+      console.log('Realtime status:', status);
+    });
+
+  // Polling a cada 10s como fallback
+  setInterval(() => {
+    carregarPedidos();
+    carregarDiasBloqueados();
+  }, 10000);
 }
 
 // ===== FIM SUPABASE =====
